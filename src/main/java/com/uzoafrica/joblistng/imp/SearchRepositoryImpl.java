@@ -6,11 +6,11 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.uzoafrica.joblistng.model.Post;
 import com.uzoafrica.joblistng.repository.SearchRepository;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
 import org.springframework.stereotype.Component;
 
-import javax.swing.text.Document;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,17 +29,17 @@ public class SearchRepositoryImpl implements SearchRepository {
         MongoDatabase database = client.getDatabase("uzoafrica");
         MongoCollection<Document> collection = database.getCollection("JobPost");
 
-        AggregateIterable<Document> result = collection.aggregate(Arrays.asList(new Document("$search",
-                                new Document("text",
+        AggregateIterable<Document> result = collection.aggregate(Arrays.asList(new Document ("$search",
+                        new Document("text",
                                 new Document("query", text)
-                                        .append("path", Arrays.asList("techs", "desc", "profile")))),
-                                new Document("$sort",
-                                 new Document("exp", 1L)),
-                                new Document("$limit", 5L)));
+                                        .append("path", Arrays.asList("techs", "desc","profile")))),
+                new Document("$sort",
+                        new Document("exp", 1L)),
+                new Document("$limit", 5L)));
 
         result.forEach(doc -> posts.add(converter.read(Post.class,doc)));
 
         return posts;
     }
-
 }
+
